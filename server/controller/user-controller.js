@@ -36,10 +36,14 @@ export const userSignup = async (request, response) => {
             phone
         });
 
-        await newUser.save();
+        console.log("Saving user to database:", newUser);
+        const savedUser = await newUser.save();
+        console.log("User saved successfully:", savedUser);
 
         return response.status(200).json({
-            message: "Signup successful"
+            message: "Signup successful",
+            firstname: savedUser.firstname,
+            email: savedUser.email
         });
 
     } catch (error) {

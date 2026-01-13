@@ -7,6 +7,6 @@ export const authenticateSignup = async (data) => {
     console.log('Payload being sent to /signup:', data); // Debugging log
     return await axios.post(`${URL}/signup`, data);
   } catch (error) {
-    console.log('Error while calling signup API', error);
+    console.log('Error while calling signup API', error.response || error.message || error);
   }
 };

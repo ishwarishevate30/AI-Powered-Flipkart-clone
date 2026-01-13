@@ -13,10 +13,10 @@ export const navData = [
     ];
 
 export const bannerData = [
-  "https://images.pexels.com/photos/769289/pexels-photo-769289.jpeg?auto=compress&cs=tinysrgb&w=1260&h=400&fit=crop",
-  "https://images.pexels.com/photos/373945/pexels-photo-373945.jpeg?auto=compress&cs=tinysrgb&w=1260&h=400&fit=crop",
-  "https://images.pexels.com/photos/298823/pexels-photo-298823.jpeg?auto=compress&cs=tinysrgb&w=1260&h=400&fit=crop",
-  "https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=1260&h=400&fit=crop"
+  "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/b9423f4fafdeff72.jpg?q=60",
+ "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/c1786792b3252eb0.jpg?q=60",
+  
+  "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/74f0ad81e44e6e6f.jpg?q=60"
 ];
 
 

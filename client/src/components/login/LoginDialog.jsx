@@ -1,7 +1,7 @@
 import { Dialog, Box, TextField, Typography, Button, styled } from "@mui/material";
-import { useState } from "react";
-
+import { useState, useContext } from "react";
 import { authenticateSignup } from "../../services/api";
+import { DataContext } from "../../context/DataProvider";
 
 /* ---------- Styled Components ---------- */
 
@@ -74,11 +74,6 @@ const CreateAccount = styled(Typography)`
 
 /* ---------- Initial Values ---------- */
 
-const accountInitialValues = {
-  login: { view: "login" },
-  signup: { view: "signup" },
-};
-
 const signupInitialValues = {
   firstname: "",
   lastname: "",
@@ -91,86 +86,60 @@ const signupInitialValues = {
 /* ---------- Component ---------- */
 
 const LoginDialog = ({ open, setOpen }) => {
-  const [account, setAccount] = useState(accountInitialValues.login);
+  const [view, setView] = useState("login");
   const [signup, setSignup] = useState(signupInitialValues);
+
+  const { setAccount } = useContext(DataContext);
 
   const handleClose = () => {
     setOpen(false);
-    setAccount(accountInitialValues.login);
+    setView("login");
   };
 
-  const toggleSignup = () => {
-    setAccount(accountInitialValues.signup);
-  };
-
-  const toggleLogin = () => {
-    setAccount(accountInitialValues.login);
-  };
+  const toggleSignup = () => setView("signup");
+  const toggleLogin = () => setView("login");
 
   const onInputChange = (e) => {
-    const updatedSignup = { ...signup, [e.target.name]: e.target.value };
-    console.log("Updated signup object:", updatedSignup); // Debugging log
-    setSignup(updatedSignup);
+    setSignup({ ...signup, [e.target.name]: e.target.value });
   };
 
+  // ✅ CONTINUE BUTTON LOGIC
   const signupUser = async () => {
     try {
-      console.log("SIGNUP DATA:", signup);
-
-      // Validate input fields
-      const { firstname, lastname, username, email, password, phone } = signup;
-      if (!firstname || !lastname || !username || !email || !password || !phone) {
-        console.log("Validation failed: All fields are required.");
-        return;
-      }
-
       const response = await authenticateSignup(signup);
-      if (response && response.data) {
-        console.log(response.data);
-        handleClose();
-      } else {
-        console.log("Signup failed: No response data.");
-      }
+
+      console.log("API Response:", response.data); // Debugging log
+
+      // ⭐ username context me save
+      setAccount({
+        firstname: response.data.firstname,
+        email: response.data.email,
+      });
+
+      handleClose();
     } catch (error) {
-      if (error.response && error.response.status === 409) {
-        console.log("Signup failed: User already exists.");
-        alert("User already exists. Please use a different email."); // User-friendly message
-      } else {
-        console.log("Signup error:", error);
-      }
+      alert("Signup failed");
     }
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      scroll="body"
-      PaperProps={{
-        sx: {
-          maxWidth: "unset",
-          overflow: "hidden",
-        },
-      }}
-    >
+    <Dialog open={open} onClose={handleClose} scroll="body">
       <Component>
         <Box sx={{ display: "flex", height: "100%", width: "100%" }}>
-          {/* Left Section */}
+          {/* LEFT */}
           <ImgBox>
             <Typography variant="h5">
-              {account.view === "login"
-                ? "Login"
-                : "Looks like you're new here!"}
+              {view === "login" ? "Login" : "Looks like you're new here!"}
             </Typography>
             <Typography sx={{ mt: 2 }}>
-              {account.view === "login"
+              {view === "login"
                 ? "Get access to your Orders, Wishlist and Recommendations"
                 : "Sign up with your details to get started"}
             </Typography>
           </ImgBox>
 
-          {/* Right Section */}
-          {account.view === "login" ? (
+          {/* RIGHT */}
+          {view === "login" ? (
             <Wrapper>
               <TextField variant="standard" label="Enter Email" fullWidth />
               <TextField
@@ -181,11 +150,10 @@ const LoginDialog = ({ open, setOpen }) => {
               />
 
               <Text>
-                By continuing, you agree to Flipkart's Terms of Use and Privacy
-                Policy.
+                By continuing, you agree to Flipkart's Terms of Use and Privacy Policy.
               </Text>
 
-              <LoginButton variant="contained">Login</LoginButton>
+              <LoginButton>Login</LoginButton>
 
               <Typography sx={{ textAlign: "center" }}>OR</Typography>
 
@@ -197,51 +165,14 @@ const LoginDialog = ({ open, setOpen }) => {
             </Wrapper>
           ) : (
             <Wrapper>
-              <TextField
-                variant="standard"
-                name="firstname"
-                label="First Name"
-                onChange={onInputChange}
-                fullWidth
-              />
-              <TextField
-                variant="standard"
-                name="lastname"
-                label="Last Name"
-                onChange={onInputChange}
-                fullWidth
-              />
-              <TextField
-                variant="standard"
-                name="username"
-                label="Username"
-                onChange={onInputChange}
-                fullWidth
-              />
-              <TextField
-                variant="standard"
-                name="email"
-                label="Email"
-                onChange={onInputChange}
-                fullWidth
-              />
-              <TextField
-                variant="standard"
-                name="password"
-                label="Password"
-                type="password"
-                onChange={onInputChange}
-                fullWidth
-              />
-              <TextField
-                variant="standard"
-                name="phone"
-                label="Phone"
-                onChange={onInputChange}
-                fullWidth
-              />
+              <TextField name="firstname" label="First Name" variant="standard" onChange={onInputChange} />
+              <TextField name="lastname" label="Last Name" variant="standard" onChange={onInputChange} />
+              <TextField name="username" label="Username" variant="standard" onChange={onInputChange} />
+              <TextField name="email" label="Email" variant="standard" onChange={onInputChange} />
+              <TextField name="password" label="Password" type="password" variant="standard" onChange={onInputChange} />
+              <TextField name="phone" label="Phone" variant="standard" onChange={onInputChange} />
 
-              <LoginButton variant="contained" onClick={signupUser}>
+              <LoginButton onClick={signupUser}>
                 Continue
               </LoginButton>
 
@@ -257,3 +188,4 @@ const LoginDialog = ({ open, setOpen }) => {
 };
 
 export default LoginDialog;
+
