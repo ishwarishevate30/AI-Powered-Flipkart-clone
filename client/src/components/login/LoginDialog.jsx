@@ -1,6 +1,6 @@
 import { Dialog, Box, TextField, Typography, Button, styled } from "@mui/material";
 import { useState, useContext } from "react";
-import { authenticateSignup } from "../../services/api";
+import { authenticateSignup, authenticateLogin } from "../../services/api";
 import { DataContext } from "../../context/DataProvider";
 
 /* ---------- Styled Components ---------- */
@@ -83,11 +83,17 @@ const signupInitialValues = {
   phone: "",
 };
 
+const loginInitialValues = {
+  email: "",
+  password: "",
+};
+
 /* ---------- Component ---------- */
 
 const LoginDialog = ({ open, setOpen }) => {
   const [view, setView] = useState("login");
   const [signup, setSignup] = useState(signupInitialValues);
+  const[login,setLogin]= useState(loginInitialValues);
 
   const { setAccount } = useContext(DataContext);
 
@@ -120,6 +126,24 @@ const LoginDialog = ({ open, setOpen }) => {
     } catch (error) {
       alert("Signup failed");
     }
+  }
+  const onValueChange = (e) => {
+
+    setLogin({ ...login, [e.target.name]: e.target.value });
+  }
+
+  const loginUser = async() => {
+    try {
+      const response = await authenticateLogin(login);
+      console.log("Login API Response:", response.data); // Debugging log 
+      setAccount({
+        firstname: response.data.firstname,
+        email: response.data.email,
+      });
+      handleClose();
+    } catch (error) {
+      alert("Login failed");
+    }
   };
 
   return (
@@ -141,9 +165,9 @@ const LoginDialog = ({ open, setOpen }) => {
           {/* RIGHT */}
           {view === "login" ? (
             <Wrapper>
-              <TextField variant="standard" label="Enter Email" fullWidth />
+              <TextField variant="standard" onChange={(e)=>onValueChange(e)} name='email' label="Enter Email" fullWidth />
               <TextField
-                variant="standard"
+                variant="standard" onChange={(e)=>onValueChange(e)} name='password'
                 label="Enter Password"
                 type="password"
                 fullWidth
@@ -153,7 +177,7 @@ const LoginDialog = ({ open, setOpen }) => {
                 By continuing, you agree to Flipkart's Terms of Use and Privacy Policy.
               </Text>
 
-              <LoginButton>Login</LoginButton>
+              <LoginButton onClick ={() => loginUser()}>Login</LoginButton>
 
               <Typography sx={{ textAlign: "center" }}>OR</Typography>
 

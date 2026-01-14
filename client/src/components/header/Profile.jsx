@@ -1,7 +1,13 @@
-import { Typography, Box, Menu, MenuItem } from "@mui/material";
+import { Typography, Box, Menu, MenuItem, styled } from "@mui/material";
 import { useState, useContext } from "react";
 import { DataContext } from "../../context/DataProvider";
+import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 
+
+const Logout = styled(Typography)`
+  font-size: 14px;
+  
+`
 const Profile = ({ account }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -38,8 +44,10 @@ const Profile = ({ account }) => {
         }}
       >
         <MenuItem onClick={handleClose}>My Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My Account</MenuItem>
-        <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+        <MenuItem onClick={handleSignOut}>
+          <PowerSettingsNewIcon color="primary" fontSize="small" style={{ marginRight: 8 }} />
+       <Logout>Logout</Logout>
+        </MenuItem>
       </Menu>
     </Box>
   );
